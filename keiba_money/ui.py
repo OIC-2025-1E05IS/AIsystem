@@ -156,7 +156,7 @@ class KeibaMoneyApp(App):
         return scroll
 
     def date_text(self):
-        return self.selected_date.strftime("%Y年%-m月%-d日") if hasattr(self.selected_date, "strftime") else ""
+        return f"{self.selected_date.year}年{self.selected_date.month}月{self.selected_date.day}日"
 
     def weekday_text(self):
         return ["月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日", "日曜日"][self.selected_date.weekday()]
