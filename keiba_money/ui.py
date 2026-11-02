@@ -13,7 +13,7 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.popup import Popup
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.spinner import Spinner
+from kivy.uix.spinner import Spinner, SpinnerOption
 from kivy.uix.textinput import TextInput
 from kivy.utils import get_color_from_hex
 
@@ -77,6 +77,13 @@ class AppButton(Button):
         super().__init__(**kwargs)
 
 
+class AppSpinnerOption(SpinnerOption):
+    def __init__(self, **kwargs):
+        kwargs.setdefault("font_name", FONT)
+        kwargs.setdefault("font_size", "12sp")
+        kwargs.setdefault("color", color(DARK_GREEN))
+        super().__init__(**kwargs)
+
 class KeibaMoneyApp(App):
     def build(self):
         self.title = "KEIBA MONEY"
@@ -129,6 +136,7 @@ class KeibaMoneyApp(App):
         self.venue_spinner = Spinner(
             text="東京", values=("札幌", "函館", "福島", "新潟", "東京", "中山", "中京", "京都", "阪神", "小倉"),
             font_name=FONT, font_size="12sp", color=color(DARK_GREEN),
+            option_cls=AppSpinnerOption,
             background_normal="", background_color=color(PALE_GREEN),
             size_hint_y=None, height=dp(42)
         )
