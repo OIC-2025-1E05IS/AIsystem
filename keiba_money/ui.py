@@ -128,7 +128,7 @@ class KeibaMoneyApp(App):
         # Entry form
         page.add_widget(self.section_title("レースを記録する", "レース名・日付・金額を入力して登録します"))
         form = BoxLayout(orientation="vertical", spacing=dp(8), size_hint_y=None, padding=dp(14))
-        form.height = dp(326)
+        form.height = dp(430)
         self.race_name = AppInput("例：天皇賞（秋）")
         self.race_date = AppInput("例：2026-11-02", text=date.today().isoformat())
         self.purchase = AppInput("例：3000（円）", input_filter="int")
