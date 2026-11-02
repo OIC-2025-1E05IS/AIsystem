@@ -81,7 +81,7 @@ class AppSpinnerOption(SpinnerOption):
     def __init__(self, **kwargs):
         kwargs.setdefault("font_name", FONT)
         kwargs.setdefault("font_size", "12sp")
-        kwargs.setdefault("color", color(DARK_GREEN))
+        kwargs.setdefault("color", color(TEXT))
         super().__init__(**kwargs)
 
 class KeibaMoneyApp(App):
