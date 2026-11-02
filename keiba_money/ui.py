@@ -106,42 +106,61 @@ class KeibaMoneyApp(App):
         self.rate_value = self.stat(stats, "回収率", "0.0%")
         page.add_widget(stats)
 
-        form = BoxLayout(orientation="vertical", size_hint_y=None, height=dp(292),
+        form = BoxLayout(orientation="vertical", size_hint_y=None, height=dp(330),
                          padding=dp(14), spacing=dp(9))
         self.card_background(form)
         form.add_widget(AppLabel(text="レースを記録する", font_size="16sp",
                                  bold=True, color=color(DARK_GREEN),
                                  size_hint_y=None, height=dp(25)))
 
-        form.add_widget(AppLabel(text="開催日", font_size="12sp",
-                                 color=color(MUTED), size_hint_y=None, height=dp(18)))
-        date_row = BoxLayout(size_hint_y=None, height=dp(43), spacing=dp(8))
-        self.date_button = AppButton(text=self.date_text(), background_color=color(PALE_GREEN),
-                                     color=color(DARK_GREEN), on_press=self.open_date_picker)
-        self.weekday_label = AppLabel(text=self.weekday_text(), font_size="12sp",
-                                      color=color(MUTED), size_hint_x=None, width=dp(48),
-                                      halign="center")
-        date_row.add_widget(self.date_button)
-        date_row.add_widget(self.weekday_label)
-        form.add_widget(date_row)
+        selector_row = GridLayout(cols=3, spacing=dp(8), size_hint_y=None, height=dp(70))
+        date_col = BoxLayout(orientation="vertical", spacing=dp(4))
+        date_col.add_widget(AppLabel(text="開催日", font_size="12sp", color=color(MUTED),
+                                     size_hint_y=None, height=dp(19)))
+        self.date_button = AppButton(text=f"{self.date_text()}（{self.weekday_text()}）",
+                                     background_color=color(PALE_GREEN), color=color(DARK_GREEN),
+                                     font_size="11sp", on_press=self.open_date_picker)
+        date_col.add_widget(self.date_button)
+        selector_row.add_widget(date_col)
 
-        race_row = BoxLayout(size_hint_y=None, height=dp(43), spacing=dp(8))
-        race_row.add_widget(AppLabel(text="レース", font_size="12sp",
-                                     color=color(MUTED), size_hint_x=None, width=dp(65)))
-        self.race_spinner = Spinner(
-            text="11R", values=tuple(f"{n}R" for n in range(1, 13)),
-            font_name=FONT, font_size="14sp", color=color(DARK_GREEN),
+        venue_col = BoxLayout(orientation="vertical", spacing=dp(4))
+        venue_col.add_widget(AppLabel(text="競馬場", font_size="12sp", color=color(MUTED),
+                                      size_hint_y=None, height=dp(19)))
+        self.venue_spinner = Spinner(
+            text="東京", values=("札幌", "函館", "福島", "新潟", "東京", "中山", "中京", "京都", "阪神", "小倉"),
+            font_name=FONT, font_size="12sp", color=color(DARK_GREEN),
             background_normal="", background_color=color(PALE_GREEN),
             size_hint_y=None, height=dp(42)
         )
-        race_row.add_widget(self.race_spinner)
-        form.add_widget(race_row)
+        venue_col.add_widget(self.venue_spinner)
+        selector_row.add_widget(venue_col)
 
-        amount_row = GridLayout(cols=2, spacing=dp(8), size_hint_y=None, height=dp(44))
-        self.purchase = AppInput("購入金額（円）", input_filter="int")
-        self.payout = AppInput("払戻金額（円）", input_filter="int")
-        amount_row.add_widget(self.purchase)
-        amount_row.add_widget(self.payout)
+        race_col = BoxLayout(orientation="vertical", spacing=dp(4))
+        race_col.add_widget(AppLabel(text="レース", font_size="12sp", color=color(MUTED),
+                                     size_hint_y=None, height=dp(19)))
+        self.race_spinner = Spinner(
+            text="11R", values=tuple(f"{n}R" for n in range(1, 13)),
+            font_name=FONT, font_size="12sp", color=color(DARK_GREEN),
+            background_normal="", background_color=color(PALE_GREEN),
+            size_hint_y=None, height=dp(42)
+        )
+        race_col.add_widget(self.race_spinner)
+        selector_row.add_widget(race_col)
+        form.add_widget(selector_row)
+
+        amount_row = GridLayout(cols=2, spacing=dp(10), size_hint_y=None, height=dp(72))
+        purchase_col = BoxLayout(orientation="vertical", spacing=dp(4))
+        purchase_col.add_widget(AppLabel(text="購入金額（円）", font_size="12sp", color=color(MUTED),
+                                         size_hint_y=None, height=dp(20)))
+        self.purchase = AppInput("金額を入力", input_filter="int")
+        purchase_col.add_widget(self.purchase)
+        amount_row.add_widget(purchase_col)
+        payout_col = BoxLayout(orientation="vertical", spacing=dp(4))
+        payout_col.add_widget(AppLabel(text="払戻金額（円）", font_size="12sp", color=color(MUTED),
+                                       size_hint_y=None, height=dp(20)))
+        self.payout = AppInput("金額を入力", input_filter="int")
+        payout_col.add_widget(self.payout)
+        amount_row.add_widget(payout_col)
         form.add_widget(amount_row)
 
         bottom = BoxLayout(size_hint_y=None, height=dp(42), spacing=dp(8))
@@ -245,13 +264,12 @@ class KeibaMoneyApp(App):
 
     def choose_date(self, day):
         self.selected_date = date(self.calendar_year, self.calendar_month, day)
-        self.date_button.text = self.date_text()
-        self.weekday_label.text = self.weekday_text()
+        self.date_button.text = f"{self.date_text()}（{self.weekday_text()}）"
         self.calendar_popup.dismiss()
 
     def add_record(self, *_):
         try:
-            race = self.race_spinner.text
+            race = f"{self.venue_spinner.text} {self.race_spinner.text}"
             race_date = self.selected_date.isoformat()
             purchase = int(self.purchase.text or "0")
             payout = int(self.payout.text or "0")
