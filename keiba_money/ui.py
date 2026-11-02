@@ -29,7 +29,12 @@ TEXT = "#25352A"
 MUTED = "#748278"
 BORDER = "#DCE7DE"
 RED = "#D9534F"
-FONT = "C:/Windows/Fonts/meiryo.ttc"
+FONT_CANDIDATES = (
+    "C:/Windows/Fonts/meiryo.ttc",
+    "C:/Windows/Fonts/YuGothM.ttc",
+    "C:/Windows/Fonts/msgothic.ttc",
+)
+FONT = next((path for path in FONT_CANDIDATES if __import__("os").path.exists(path)), "Roboto")
 
 
 def color(value):
@@ -101,7 +106,7 @@ class KeibaMoneyApp(App):
         self.rate_value = self.stat(stats, "回収率", "0.0%")
         page.add_widget(stats)
 
-        form = BoxLayout(orientation="vertical", size_hint_y=None, height=dp(255),
+        form = BoxLayout(orientation="vertical", size_hint_y=None, height=dp(292),
                          padding=dp(14), spacing=dp(9))
         self.card_background(form)
         form.add_widget(AppLabel(text="レースを記録する", font_size="16sp",
@@ -278,14 +283,14 @@ class KeibaMoneyApp(App):
             self.history.add_widget(empty)
             return
         for record in records:
-            item = BoxLayout(size_hint_y=None, height=dp(62), padding=dp(10), spacing=dp(8))
+            item = BoxLayout(size_hint_y=None, height=dp(70), padding=dp(10), spacing=dp(8))
             self.card_background(item)
             d = date.fromisoformat(record["race_date"])
             weekday = ["月", "火", "水", "木", "金", "土", "日"][d.weekday()]
             detail = (f"{d.year}年{d.month}月{d.day}日（{weekday}）  {record['race_name']}\n"
                       f"購入 ¥{record['purchase']:,}　 払戻 ¥{record['payout']:,}　 "
                       f"収支 ¥{record['profit']:,}")
-            item.add_widget(AppLabel(text=detail, font_size="11sp",
+            item.add_widget(AppLabel(text=detail, font_size="10sp",
                                      color=color(GREEN if record["profit"] >= 0 else TEXT)))
             delete = AppButton(text="削除", size_hint_x=None, width=dp(62),
                                height=dp(34), font_size="11sp",
